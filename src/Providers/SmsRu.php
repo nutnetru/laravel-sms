@@ -42,7 +42,7 @@ class SmsRu implements Provider
      * @param $text
      * @return mixed
      */
-    public function send($phone, $text) : bool
+    public function send($phone, $text, array $options = []) : bool
     {
         $response = $this->getClient()->smsSend(
             new SmsRuApi\Entity\Sms($phone, $text)
@@ -56,7 +56,7 @@ class SmsRu implements Provider
      * @param $message
      * @return bool
      */
-    public function sendBatch(array $phones, $message) : bool
+    public function sendBatch(array $phones, $message, array $options = []) : bool
     {
         $smsList = array_map(function ($phone) use ($message) {
             return new SmsRuApi\Entity\Sms($phone, $message);

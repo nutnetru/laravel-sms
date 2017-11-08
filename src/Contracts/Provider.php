@@ -17,12 +17,12 @@ interface Provider
      * @param $message
      * @return bool
      */
-    public function send($phone, $message) : bool;
+    public function send($phone, $message, array $options = []) : bool;
 
     /**
      * @param array $phones
      * @param $message
      * @return bool
      */
-    public function sendBatch(array $phones, $message) : bool;
+    public function sendBatch(array $phones, $message, array $options = []) : bool;
 }

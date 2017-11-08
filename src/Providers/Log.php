@@ -35,7 +35,7 @@ class Log implements Provider
      * @param $text
      * @return mixed
      */
-    public function send($phone, $text) : bool
+    public function send($phone, $text, array $options = []) : bool
     {
         $this->logWriter->debug(sprintf(
             'Sms is sent to %s: "%s"',
@@ -51,7 +51,7 @@ class Log implements Provider
      * @param $message
      * @return bool
      */
-    public function sendBatch(array $phones, $message): bool
+    public function sendBatch(array $phones, $message, array $options = []) : bool
     {
         foreach ($phones as $phone) {
             $this->send($phone, $message);

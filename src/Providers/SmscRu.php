@@ -40,15 +40,15 @@ class SmscRu implements Provider
     /**
      * @inheritdoc
      */
-    public function send($phone, $message) : bool
+    public function send($phone, $text, array $options = []) : bool
     {
-        return $this->sendBatch([$phone], $message);
+        return $this->sendBatch([$phone], $message, $options);
     }
 
     /**
      * @inheritdoc
      */
-    public function sendBatch(array $phones, $message) : bool
+    public function sendBatch(array $phones, $message, array $options = []) : bool
     {
         $response = $this->sendSms($phones, $message);
 
@@ -64,15 +64,20 @@ class SmscRu implements Provider
      * @param $message
      * @return mixed
      */
-    private function sendSms(array $phones, $message)
+    private function sendSms(array $phones, $message, array $additionalParams = [])
     {
-        $url = self::BASE_URL.'?'.http_build_query([
+        $httpQuery = array_merge(
+            [
                 'login' => $this->login,
                 'psw' => md5($this->password),
                 'phones' => implode(self::PHONE_DELIMITER, $phones),
                 'mes' => mb_convert_encoding($message, 'Windows-1251'),
                 'fmt' => 3
-            ]);
+            ],
+            $additionalParams
+        );
+
+        $url = self::BASE_URL.'?'.http_build_query($httpQuery);
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);

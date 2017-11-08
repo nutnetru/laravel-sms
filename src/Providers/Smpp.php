@@ -39,7 +39,7 @@ class Smpp implements Provider
     /**
      * @inheritdoc
      */
-    public function send($phone, $message) : bool
+    public function send($phone, $text, array $options = []) : bool
     {
         return $this->smpp->sendOne($phone, $message);
     }
@@ -47,7 +47,7 @@ class Smpp implements Provider
     /**
      * @inheritdoc
      */
-    public function sendBatch(array $phones, $message) : bool
+    public function sendBatch(array $phones, $message, array $options = []) : bool
     {
         $this->smpp->sendBulk($phones, $message);
 
