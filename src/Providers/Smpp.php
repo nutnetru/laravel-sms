@@ -41,7 +41,7 @@ class Smpp implements Provider
      */
     public function send($phone, $text, array $options = []) : bool
     {
-        return $this->smpp->sendOne($phone, $message);
+        return $this->smpp->sendOne($phone, $text);
     }
 
     /**
