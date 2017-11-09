@@ -42,7 +42,7 @@ class SmscRu implements Provider
      */
     public function send($phone, $text, array $options = []) : bool
     {
-        return $this->sendBatch([$phone], $message, $options);
+        return $this->sendBatch([$phone], $text, $options);
     }
 
     /**
