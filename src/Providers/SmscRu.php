@@ -50,7 +50,7 @@ class SmscRu implements Provider
      */
     public function sendBatch(array $phones, $message, array $options = []) : bool
     {
-        $response = $this->sendSms($phones, $message);
+        $response = $this->sendSms($phones, $message, $options);
 
         if (!$response) {
             return false;
@@ -62,6 +62,7 @@ class SmscRu implements Provider
     /**
      * @param array $phones
      * @param $message
+     * @param array $additionalParams
      * @return mixed
      */
     private function sendSms(array $phones, $message, array $additionalParams = [])

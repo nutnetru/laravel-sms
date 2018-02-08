@@ -37,10 +37,10 @@ class SmsRu implements Provider
     }
 
     /**
-     * Send single sms
      * @param $phone
      * @param $text
-     * @return mixed
+     * @param array $options
+     * @return bool
      */
     public function send($phone, $text, array $options = []) : bool
     {
@@ -54,6 +54,7 @@ class SmsRu implements Provider
     /**
      * @param array $phones
      * @param $message
+     * @param array $options
      * @return bool
      */
     public function sendBatch(array $phones, $message, array $options = []) : bool
