@@ -6,7 +6,7 @@
 
 namespace Nutnet\LaravelSms\Providers;
 
-use Illuminate\Log\Writer;
+use Psr\Log\LoggerInterface as Writer;
 use Nutnet\LaravelSms\Contracts\Provider;
 
 /**
