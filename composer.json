@@ -2,7 +2,6 @@
     "name": "nutnet/laravel-sms",
     "description": "Пакет для Laravel 5.x для отправки смс",
     "require": {
-        "php" : "~7.0",
         "illuminate/support": "~5.0"
     },
     "autoload": {
