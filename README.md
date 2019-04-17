@@ -73,6 +73,17 @@ php artisan vendor:publish
 ],
 ```
 
+#### IqSms.ru (Смс-Дисконт)
+Отправка сообщений через провайдера iqsms.ru. Требует для работы установленный `curl`.
+В настройках провайдера требуется указать логин и пароль:
+```php
+// config/nutnet-laravel-sms.php
+'provider_options' => [
+    'login' => env('NUTNET_SMS_LOGIN'),
+    'password' => env('NUTNET_SMS_PASSWORD'),
+],
+```
+
 ## Отправка сообщений
 
 Для отправки сообщений используется класс `Nutnet\LaravelSms\SmsSender`.
