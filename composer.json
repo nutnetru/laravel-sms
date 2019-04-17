@@ -13,5 +13,13 @@
         "illuminate/log": "Required for Log provider",
         "franzose/laravel-smpp": "Required for SMPP provider",
         "zelenin/smsru": "Required for Sms.Ru provider"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nutnet\\LaravelSms\\ServiceProvider"
+            ]
+        }
     }
+
 }
