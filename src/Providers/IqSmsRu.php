@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Maksim Khodyrev<maximkou@gmail.com>
+ * 17.04.18
+ */
 
 namespace Nutnet\LaravelSms\Providers;
 
@@ -13,8 +17,6 @@ use Illuminate\Support\Arr;
  */
 class IqSmsRu implements Provider
 {
-    const ERROR_EMPTY_RESPONSE = 'errorEmptyResponse';
-
     const STATUS_OK = 'ok';
     const STATUS_ACCEPTED = 'accepted';
 

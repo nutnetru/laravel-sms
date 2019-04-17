@@ -1,11 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: maximkou
- * Date: 16.11.18
- * Time: 18:25
+ * @author Maksim Khodyrev<maximkou@gmail.com>
+ * 17.04.18
  */
-
 namespace Nutnet\LaravelSms\Exceptions;
 
 /**

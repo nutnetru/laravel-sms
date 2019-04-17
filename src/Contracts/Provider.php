@@ -7,8 +7,8 @@
 namespace Nutnet\LaravelSms\Contracts;
 
 /**
- * Interface BridgeInterface
- * @package App\Services\Sms\Bridges
+ * Interface Provider
+ * @package Nutnet\LaravelSms\Contracts
  */
 interface Provider
 {
