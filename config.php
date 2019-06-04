@@ -7,14 +7,14 @@ return [
     /**
      * название класса-провайдера
      * Доступные провайдеры:
-     * * \Nutnet\LaravelSms\Providers\Log
-     * * \Nutnet\LaravelSms\Providers\Smpp
-     * * \Nutnet\LaravelSms\Providers\SmscRu
-     * * \Nutnet\LaravelSms\Providers\SmsRu
-     * * \Nutnet\LaravelSms\Providers\IqSmsRu
+     * * \Nutnet\LaravelSms\Providers\Log (alias: log)
+     * * \Nutnet\LaravelSms\Providers\Smpp (alias: smpp)
+     * * \Nutnet\LaravelSms\Providers\SmscRu (alias: smscru)
+     * * \Nutnet\LaravelSms\Providers\SmsRu (alias: smsru)
+     * * \Nutnet\LaravelSms\Providers\IqSmsRu (alias: iqsmsru)
      * @see Nutnet\LaravelSms\Providers
      */
-    'provider' => env('NUTNET_SMS_PROVIDER', \Nutnet\LaravelSms\Providers\Log::class),
+    'provider' => env('NUTNET_SMS_PROVIDER', 'log'),
 
     /**
      * настройки, специфичные для провайдера

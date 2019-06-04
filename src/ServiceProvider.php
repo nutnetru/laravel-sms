@@ -6,12 +6,25 @@
 
 namespace Nutnet\LaravelSms;
 
+use Nutnet\LaravelSms\Providers;
+
 /**
  * Class ServiceProvider
  * @package Nutnet\LaravelSms
  */
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
+    /**
+     * @var array
+     */
+    private $providerAliases = [
+        'log' => Providers\Log::class,
+        'iqsms' => Providers\IqSmsRu::class,
+        'smpp' => Providers\Smpp::class,
+        'smscru' => Providers\SmscRu::class,
+        'smsru' => Providers\SmsRu::class,
+    ];
+
     public function boot()
     {
         $this->publishes([
@@ -22,8 +35,13 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function register()
     {
         $this->app->singleton(SmsSender::class, function ($app) {
+            $providerClass = config('nutnet-laravel-sms.provider');
+            if (array_key_exists($providerClass, $this->providerAliases)) {
+                $providerClass = $this->providerAliases[$providerClass];
+            }
+
             return new SmsSender(
-                $app->make(config('nutnet-laravel-sms.provider'), [
+                $app->make($providerClass, [
                     'options' => config('nutnet-laravel-sms.provider_options')
                 ])
             );

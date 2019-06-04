@@ -6,7 +6,7 @@
 
 Подключите пакет командой:
 ```bash
-composer require nutnet/laravel-sms ~0.1
+composer require nutnet/laravel-sms ~0.4
 ```
 
 После того как пакет был установлен добавьте его сервис-провайдер в config/app.php:
@@ -29,10 +29,10 @@ php artisan vendor:publish
 
 ```php
 /**
- * название класса-провайдера
+ * название класса-провайдера или его псевдоним (доступны log, iqsms, smpp, smscru, smsru)
  * @see Nutnet\LaravelSms\Providers
  */
-'provider' => env('NUTNET_SMS_PROVIDER', \Nutnet\LaravelSms\Providers\Log::class),
+'provider' => env('NUTNET_SMS_PROVIDER', 'log'),
 
 /**
  * настройки, специфичные для провайдера
@@ -45,8 +45,8 @@ php artisan vendor:publish
 
 **Пример файла .env:**
 ```bash
-# полное название класса-провайдера
-NUTNET_SMS_PROVIDER=\Nutnet\LaravelSms\Providers\Log
+# полное название класса-провайдера или псевдоним (log, iqsms, smpp, smscru, smsru)
+NUTNET_SMS_PROVIDER=log
 
 # реквизиты для доступа к API смс-провайдера
 NUTNET_SMS_LOGIN=<ваш_логин>
