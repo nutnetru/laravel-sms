@@ -4,7 +4,7 @@
  * 17.07.17
  */
 
-namespace App\Services\Sms\Bridges\Smpp;
+namespace Nutnet\LaravelSms\Providers;
 
 use Nutnet\LaravelSms\Contracts\Provider;
 use Nutnet\LaravelSms\Providers\Smpp\SmppSender;
