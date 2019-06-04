@@ -114,3 +114,43 @@ class IndexController extends Controller
     }
 }
 ```
+
+## Использование в связке с Laravel Notifications
+
+Пакет включает в себя канал для Laravel Notifications (`Nutnet\LaravelSms\Notification\NutnetSmsChannel`).
+
+#### Настройка Notifiable-модели
+
+Добавьте метод `routeNotificationForNutnetSms` в свою Notifiable-модель, например:
+
+```php
+public function routeNotificationForNutnetSms() {
+    return $this->phone; // Метод должен возвращать номер телефона, на который будет отправлено уведомление.
+}  
+```
+
+#### Пример Notification
+
+```php
+namespace App\Notifications;
+
+use Nutnet\LaravelSms\Notification\NutnetSmsChannel;
+use Nutnet\LaravelSms\Notification\NutnetSmsMessage;
+use Illuminate\Notifications\Notification;
+
+class ExampleNotification extends Notification
+{
+    public function via($notifiable)
+    {
+        return [NutnetSmsChannel::class];
+    }
+    
+    public function toNutnetSms($notifiable)
+    {
+        return new NutnetSmsMessage('текст сообщения', ['параметр1' => 'значение1']);
+        
+        // или верните просто строку, равнозначно new NutnetSmsMessage('текст сообщения')
+        // return 'текст сообщения';
+    }
+}
+```

@@ -40,7 +40,7 @@ class SmsSender
      */
     public function sendBatch(array $phones, $message, array $options = [])
     {
-        $this->bridge->send(
+        $this->bridge->sendBatch(
             array_map([$this, 'preparePhone'], $phones),
             $message,
             $options

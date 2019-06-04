@@ -41,6 +41,7 @@ class SmsRu implements Provider
      * @param $text
      * @param array $options
      * @return bool
+     * @throws SmsRuApi\Exception\Exception
      */
     public function send($phone, $text, array $options = []) : bool
     {
@@ -56,6 +57,7 @@ class SmsRu implements Provider
      * @param $message
      * @param array $options
      * @return bool
+     * @throws SmsRuApi\Exception\Exception
      */
     public function sendBatch(array $phones, $message, array $options = []) : bool
     {
