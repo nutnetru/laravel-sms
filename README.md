@@ -43,6 +43,16 @@ php artisan vendor:publish
 ],
 ```
 
+**Пример файла .env:**
+```bash
+# полное название класса-провайдера
+NUTNET_SMS_PROVIDER=\Nutnet\LaravelSms\Providers\Log
+
+# реквизиты для доступа к API смс-провайдера
+NUTNET_SMS_LOGIN=<ваш_логин>
+NUTNET_SMS_PASSWORD=<ваш_пароль>
+```
+
 ### Поддерживаемые провайдеры смс услуг
 
 #### Log
