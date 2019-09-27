@@ -9,6 +9,11 @@
             "Nutnet\\LaravelSms\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "suggest": {
         "illuminate/log": "Required for Log provider",
         "franzose/laravel-smpp": "Required for SMPP provider",
@@ -20,6 +25,9 @@
                 "Nutnet\\LaravelSms\\ServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "zelenin/smsru": "^4.1",
+        "phpunit/phpunit": "^7.5"
     }
-
 }
