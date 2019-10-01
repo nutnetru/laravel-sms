@@ -4,6 +4,14 @@
     "require": {
         "illuminate/support": "~5.0"
     },
+    "keywords": [
+        "sms",
+        "laravel sms",
+        "laravel smsc.ru",
+        "laravel sms.ru",
+        "laravel smpp",
+        "laravel iqsms"
+    ],
     "autoload": {
         "psr-4": {
             "Nutnet\\LaravelSms\\": "src/"
