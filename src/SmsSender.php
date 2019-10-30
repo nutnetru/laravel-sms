@@ -27,20 +27,22 @@ class SmsSender
      * @param $phone
      * @param $message
      * @param array $options
+     * @return bool
      */
     public function send($phone, $message, array $options = [])
     {
-        $this->bridge->send($this->preparePhone($phone), $message, $options);
+        return $this->bridge->send($this->preparePhone($phone), $message, $options);
     }
 
     /**
      * @param array $phones
      * @param $message
      * @param array $options
+     * @return bool
      */
     public function sendBatch(array $phones, $message, array $options = [])
     {
-        $this->bridge->sendBatch(
+        return $this->bridge->sendBatch(
             array_map([$this, 'preparePhone'], $phones),
             $message,
             $options
