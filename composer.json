@@ -37,5 +37,10 @@
     "require-dev": {
         "zelenin/smsru": "^4.1",
         "phpunit/phpunit": "^7.5"
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ]
     }
 }
