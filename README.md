@@ -6,7 +6,7 @@
 
 Подключите пакет командой:
 ```bash
-composer require nutnet/laravel-sms ~0.4
+composer require nutnet/laravel-sms
 ```
 
 После того как пакет был установлен добавьте его сервис-провайдер в config/app.php (для версий Laravel ниже 5.5):
@@ -20,7 +20,7 @@ composer require nutnet/laravel-sms ~0.4
 
 Теперь необходимо перенести конфигурацию пакета в Laravel:
 ``` bash
-php artisan vendor:publish
+php artisan vendor:publish --provider="Nutnet\LaravelSms\ServiceProvider" --tag="config"
 ```
 
 ## Настройка

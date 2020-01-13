@@ -33,6 +33,7 @@ class Log implements Provider
      * Send single sms
      * @param $phone
      * @param $text
+     * @param $options
      * @return mixed
      */
     public function send($phone, $text, array $options = []) : bool
@@ -49,6 +50,7 @@ class Log implements Provider
     /**
      * @param array $phones
      * @param $message
+     * @param $options
      * @return bool
      */
     public function sendBatch(array $phones, $message, array $options = []) : bool

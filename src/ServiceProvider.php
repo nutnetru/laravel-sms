@@ -29,7 +29,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config.php' => config_path('nutnet-laravel-sms.php')
-        ]);
+        ], 'config');
     }
 
     public function register()

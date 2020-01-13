@@ -1,8 +1,8 @@
 {
     "name": "nutnet/laravel-sms",
-    "description": "Пакет для Laravel 5.x для отправки смс",
+    "description": "Package for sending SMS form your Laravel app, includes pre-installed sms providers and your custom.",
     "require": {
-        "illuminate/support": "~5.0"
+        "illuminate/support": ">=5.0"
     },
     "keywords": [
         "sms",
