@@ -7,15 +7,82 @@
 namespace Tests\Providers;
 
 use Nutnet\LaravelSms\Providers\SmsRu;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\BaseTestCase;
+use Zelenin\SmsRu\Api;
 use Zelenin\SmsRu\Auth\ApiIdAuth;
 use Zelenin\SmsRu\Auth\AuthInterface;
 use Zelenin\SmsRu\Auth\LoginPasswordAuth;
 use Zelenin\SmsRu\Auth\LoginPasswordSecureAuth;
 use Zelenin\SmsRu\Entity\Sms;
+use Zelenin\SmsRu\Entity\SmsPool;
+use Zelenin\SmsRu\Response\SmsResponse;
 
 class SmsRuTest extends BaseTestCase
 {
+    public function testSendOneMessage()
+    {
+        list($provider, $client) = $this->getSendingMocks();
+
+        $messageTo = '79112238844';
+        $message = 'Test message';
+
+        $client->expects($this->once())
+            ->method('smsSend')
+            ->willReturn(new SmsResponse(120))
+            ->with($this->callback(function ($sms) use ($messageTo, $message) {
+                if (!($sms instanceof Sms)) {
+                    return false;
+                }
+
+                return $sms->to == $messageTo && $sms->text == $message;
+            }));
+
+        $this->assertIsBool($provider->send($messageTo, $message));
+    }
+
+    public function testSendBatch()
+    {
+        list($provider, $client) = $this->getSendingMocks();
+
+        $messageTo = ['79112238844', '79991112233', '79129998877'];
+        $message = 'Test message';
+
+        $client->expects($this->once())
+            ->method('smsSend')
+            ->willReturn(new SmsResponse(100))
+            ->with($this->callback(function ($smsPool) use ($messageTo, $message) {
+                if (!($smsPool instanceof SmsPool)) {
+                    return false;
+                }
+
+                $recipients = array_map(function (Sms $sms) {
+                    return $sms->to;
+                }, $smsPool->messages);
+                $messages = array_unique(array_map(function (Sms $sms) {
+                    return $sms->text;
+                }, $smsPool->messages));
+
+                if (count($messages) > 1 || reset($messages) != $message) {
+                    return false;
+                }
+
+                return count(array_intersect($recipients, $messageTo)) == count($messageTo);
+            }));
+
+        $this->assertIsBool($provider->sendBatch($messageTo, $message));
+    }
+
+    public function testGettingClient()
+    {
+        $provider = new SmsRu([
+            'login' => 'test',
+            'password' => 'test',
+        ]);
+
+        $this->assertInstanceOf(Api::class, $provider->getClient());
+    }
+
     /**
      * @throws \ReflectionException
      */
@@ -106,5 +173,31 @@ class SmsRuTest extends BaseTestCase
     private function callAuthCreator($provider)
     {
         return $this->makeMethodAccessible(SmsRu::class, 'getAuth')->invoke($provider);
+    }
+
+    /**
+     * @return array
+     */
+    private function getSendingMocks()
+    {
+        $client = $this->getMockBuilder(Api::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['smsSend'])
+            ->getMock();
+
+        /** @var SmsRu|MockObject $provider */
+        $provider = $this->getMockBuilder(SmsRu::class)
+            ->setConstructorArgs([
+                [
+                    'login' => 'test',
+                    'password' => 'test',
+                ]
+            ])
+            ->setMethods(['getClient'])
+            ->getMock();
+
+        $provider->method('getClient')->willReturn($client);
+
+        return [$provider, $client];
     }
 }

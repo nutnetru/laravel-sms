@@ -36,11 +36,16 @@
     },
     "require-dev": {
         "zelenin/smsru": "^4.1",
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "^7.5",
+        "illuminate/log": "^5.5",
+        "franzose/laravel-smpp": "^1.1"
     },
     "scripts": {
         "test": [
             "phpunit"
+        ],
+        "test-coverage": [
+            "phpdbg -qrr ./vendor/bin/phpunit --coverage-text"
         ]
     }
 }

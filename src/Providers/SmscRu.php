@@ -50,24 +50,7 @@ class SmscRu implements Provider
      */
     public function sendBatch(array $phones, $message, array $options = []) : bool
     {
-        $response = $this->sendSms($phones, $message, $options);
-
-        if (!$response) {
-            return false;
-        }
-
-        return !isset($response['error']);
-    }
-
-    /**
-     * @param array $phones
-     * @param $message
-     * @param array $additionalParams
-     * @return mixed
-     */
-    private function sendSms(array $phones, $message, array $additionalParams = [])
-    {
-        $httpQuery = array_merge(
+        $response = $this->doRequest(array_merge(
             [
                 'login' => $this->login,
                 'psw' => md5($this->password),
@@ -75,10 +58,24 @@ class SmscRu implements Provider
                 'mes' => mb_convert_encoding($message, 'Windows-1251'),
                 'fmt' => 3
             ],
-            $additionalParams
-        );
+            $options
+        ));
 
+        if (!is_array($response)) {
+            return (bool)$response;
+        }
+
+        return !isset($response['error']);
+    }
+
+    /**
+     * @param $httpQuery
+     * @return mixed
+     */
+    protected function doRequest($httpQuery)
+    {
         $url = self::BASE_URL.'?'.http_build_query($httpQuery);
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);

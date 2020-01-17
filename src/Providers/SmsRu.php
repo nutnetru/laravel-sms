@@ -86,7 +86,7 @@ class SmsRu implements Provider
     /**
      * @return SmsRuApi\Api
      */
-    private function getClient()
+    public function getClient()
     {
         if (!$this->client) {
             return $this->client = new SmsRuApi\Api($this->getAuth());
