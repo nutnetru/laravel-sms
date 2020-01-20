@@ -20,7 +20,7 @@ class LogTest extends BaseTestCase
         $to = '79991112233';
         $msg = 'Test';
 
-        $provider->send($to, $msg);
+        $this->assertTrue($provider->send($to, $msg));
         $this->assertTrue($store->hasDebugThatContains($this->formatMsg($to, $msg)));
     }
 
@@ -32,7 +32,7 @@ class LogTest extends BaseTestCase
         $to = ['79112238844', '79991112233', '79129998877'];
         $msg = 'Test';
 
-        $provider->sendBatch($to, $msg);
+        $this->assertTrue($provider->sendBatch($to, $msg));
         foreach ($to as $phone) {
             $this->assertTrue($store->hasDebugThatContains($this->formatMsg($phone, $msg)));
         }

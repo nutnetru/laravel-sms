@@ -62,7 +62,7 @@ class SmscRu implements Provider
         ));
 
         if (!is_array($response)) {
-            return (bool)$response;
+            return true == $response;
         }
 
         return !isset($response['error']);

@@ -27,9 +27,12 @@ class SmsRuTest extends BaseTestCase
         $messageTo = '79112238844';
         $message = 'Test message';
 
-        $client->expects($this->once())
+        $client->expects($this->exactly(2))
             ->method('smsSend')
-            ->willReturn(new SmsResponse(120))
+            ->willReturn(
+                new SmsResponse(120),
+                new SmsResponse(SmsRu::CODE_OK)
+            )
             ->with($this->callback(function ($sms) use ($messageTo, $message) {
                 if (!($sms instanceof Sms)) {
                     return false;
@@ -38,7 +41,8 @@ class SmsRuTest extends BaseTestCase
                 return $sms->to == $messageTo && $sms->text == $message;
             }));
 
-        $this->assertIsBool($provider->send($messageTo, $message));
+        $this->assertFalse($provider->send($messageTo, $message));
+        $this->assertTrue($provider->send($messageTo, $message));
     }
 
     public function testSendBatch()
@@ -48,9 +52,12 @@ class SmsRuTest extends BaseTestCase
         $messageTo = ['79112238844', '79991112233', '79129998877'];
         $message = 'Test message';
 
-        $client->expects($this->once())
+        $client->expects($this->exactly(2))
             ->method('smsSend')
-            ->willReturn(new SmsResponse(100))
+            ->willReturn(
+                new SmsResponse(SmsRu::CODE_OK),
+                new SmsResponse(300)
+            )
             ->with($this->callback(function ($smsPool) use ($messageTo, $message) {
                 if (!($smsPool instanceof SmsPool)) {
                     return false;
@@ -70,7 +77,8 @@ class SmsRuTest extends BaseTestCase
                 return count(array_intersect($recipients, $messageTo)) == count($messageTo);
             }));
 
-        $this->assertIsBool($provider->sendBatch($messageTo, $message));
+        $this->assertTrue($provider->sendBatch($messageTo, $message));
+        $this->assertFalse($provider->sendBatch($messageTo, $message));
     }
 
     public function testGettingClient()

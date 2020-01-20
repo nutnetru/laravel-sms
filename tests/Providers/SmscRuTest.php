@@ -37,7 +37,12 @@ class SmscRuTest extends BaseTestCase
         $provider->send($to, $msg, $options);
     }
 
-    public function testSendBatch()
+    /**
+     * @param $sendResponse
+     * @param $expectedReturnValue
+     * @dataProvider dpSendBatch
+     */
+    public function testSendBatch($sendResponse, $expectedReturnValue)
     {
         $login = $password = 'test';
 
@@ -53,7 +58,7 @@ class SmscRuTest extends BaseTestCase
         $msg = 'Test';
         $options = ['test_1' => 1];
 
-        $provider->expects($this->exactly(3))
+        $provider->expects($this->once())
             ->method('doRequest')
             ->with($this->equalTo(array_merge(
                 [
@@ -65,14 +70,36 @@ class SmscRuTest extends BaseTestCase
                 ],
                 $options
             )))
-            ->willReturn(
-                ['success' => true],
-                ['error' => 'Bad call'],
-                false
-            );
+            ->willReturn($sendResponse);
 
-        $this->assertTrue($provider->sendBatch($to, $msg, $options));
-        $this->assertFalse($provider->sendBatch($to, $msg, $options));
-        $this->assertFalse($provider->sendBatch($to, $msg, $options));
+        $result = $provider->sendBatch($to, $msg, $options);
+
+        $this->assertIsBool($result);
+        $this->assertEquals($expectedReturnValue, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function dpSendBatch()
+    {
+        return [
+            [
+                ['success' => true],
+                true,
+            ],
+            [
+                ['error' => 'Bad call'],
+                false,
+            ],
+            [
+                false,
+                false,
+            ],
+            [
+                0,
+                false,
+            ]
+        ];
     }
 }
