@@ -49,7 +49,7 @@
             "phpdbg -qrr ./vendor/bin/phpunit --coverage-text"
         ],
         "test-mutation": [
-            "phpdbg -qrr vendor/bin/infection"
+            "PHP_BINARY=phpdbg phpdbg -qrr vendor/bin/infection --ansi"
         ]
     }
 }
