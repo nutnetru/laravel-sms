@@ -63,7 +63,7 @@ class SmscRuTest extends BaseTestCase
             ->with($this->equalTo(array_merge(
                 [
                     'login' => $login,
-                    'psw' => md5($password),
+                    'psw' => $password,
                     'phones' => implode(SmscRu::PHONE_DELIMITER, $to),
                     'mes' => mb_convert_encoding($msg, 'Windows-1251'),
                     'fmt' => 3

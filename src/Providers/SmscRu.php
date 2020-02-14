@@ -53,7 +53,7 @@ class SmscRu implements Provider
         $response = $this->doRequest(array_merge(
             [
                 'login' => $this->login,
-                'psw' => md5($this->password),
+                'psw' => $this->password,
                 'phones' => implode(self::PHONE_DELIMITER, $phones),
                 'mes' => mb_convert_encoding($message, 'Windows-1251'),
                 'fmt' => 3
