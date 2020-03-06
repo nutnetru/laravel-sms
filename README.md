@@ -23,79 +23,80 @@ composer require nutnet/laravel-sms
 php artisan vendor:publish --provider="Nutnet\LaravelSms\ServiceProvider" --tag="config"
 ```
 
-## Настройка
-Все настройки находятся в файле `config/nutnet-laravel-sms.php`.
-Настройки по умолчанию указаны ниже (используется отправка смс в лог-файл).
+## Конфигурирование
 
-```php
-/**
- * название класса-провайдера или его псевдоним (доступны log, iqsms, smpp, smscru, smsru)
- * @see Nutnet\LaravelSms\Providers
- */
-'provider' => env('NUTNET_SMS_PROVIDER', 'log'),
-
-/**
- * настройки, специфичные для провайдера
- */
-'provider_options' => [
-    'login' => env('NUTNET_SMS_LOGIN'),
-    'password' => env('NUTNET_SMS_PASSWORD'),
-],
-```
-
-**Пример файла .env:**
-```bash
-# полное название класса-провайдера или псевдоним (log, iqsms, smpp, smscru, smsru)
-NUTNET_SMS_PROVIDER=log
-
-# реквизиты для доступа к API смс-провайдера
-NUTNET_SMS_LOGIN=<ваш_логин>
-NUTNET_SMS_PASSWORD=<ваш_пароль>
-```
-
-### Поддерживаемые провайдеры смс услуг
+**ВНИМАНИЕ:** в обновлении 0.8.0 изменился формат конфигурационного файла. Если вы обновились с более ранних версий, не забудьте актуализировать конфигурацию.
 
 #### Log
 Используется для локальной разработки. Смс-сообщения записываются в файл лога.
 Не поддерживает передачу параметров сообщения.
 
+Для включения данного провайдера добавьте в `.env` файл
+
+```
+NUTNET_SMS_PROVIDER=log
+```
+
 #### SMPP
 Отправка соообщений через протокол SMPP. Требует для работы пакет `franzose/laravel-smpp`.
 В данный момент не поддерживает передачу параметров сообщения.
 
+Для включения данного провайдера добавьте в `.env` файл
+
+```
+NUTNET_SMS_PROVIDER=smpp
+```
+
+Все прочие настройки находятся в конфигурационном файле пакета `franzose/laravel-smpp`
+
 #### Sms.ru
 Отправка сообщений через провайдера Sms.ru. Требует для работы пакет `zelenin/smsru`.
+
+Для включения данного провайдера добавьте в `.env` файл
+
+```
+NUTNET_SMS_PROVIDER=smsru
+```
 
 **Авторизация по паре логин-пароль:**
 ```php
 // config/nutnet-laravel-sms.php
-'provider_options' => [
-    'auth_type' => 'standard',
-    'login' => '<your login>',
-    'password' => '<your password>',
-    'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+'providers' => [
+    'smsru' => [
+        'auth_type' => 'standard',
+        'login' => '<your login>',
+        'password' => '<your password>',
+        'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+        'message_defaults' => []
+    ]
 ],
 ```
 
 **Усиленная авторизация по паре логин-пароль и api_id:**
 ```php
 // config/nutnet-laravel-sms.php
-'provider_options' => [
-    'auth_type' => 'secured',
-    'login' => '<your login>',
-    'password' => '<your password>',
-    'api_id' => '<your api_id>',
-    'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+'providers' => [
+    'smsru' => [
+        'auth_type' => 'secured',
+        'login' => '<your login>',
+        'password' => '<your password>',
+        'api_id' => '<your api_id>',
+        'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+        'message_defaults' => []
+    ]
 ],
 ```
 
 **Авторизация с использованием api_id:**
 ```php
 // config/nutnet-laravel-sms.php
-'provider_options' => [
-    'auth_type' => 'api_id',
-    'api_id' => '<your api_id>',
-    'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+'providers' => [
+    'smsru' => [
+        'auth_type' => 'api_id',
+        'api_id' => '<your api_id>',
+        'partner_id' => '<your partner_id>', // оставьте null, если не нужен
+        'message_defaults' => []
+    ]
 ],
 ```
 
@@ -111,12 +112,22 @@ $sender->send('<phone_number>', '<your_message>', [
 
 #### Smsc.ru
 Отправка сообщений через провайдера Smsc.ru. Требует для работы установленный `curl`.
+
+Для включения данного провайдера добавьте в `.env` файл
+
+```
+NUTNET_SMS_PROVIDER=smscru
+```
+
 В настройках провайдера требуется указать логин и пароль:
 ```php
 // config/nutnet-laravel-sms.php
-'provider_options' => [
-    'login' => env('NUTNET_SMS_LOGIN'),
-    'password' => env('NUTNET_SMS_PASSWORD'),
+'providers' => [
+    'smscru' => [
+        'login' => '<your_login>',
+        'password' => '<your_password>',
+        'message_defaults' => [],
+    ]
 ],
 ```
 
@@ -124,12 +135,22 @@ $sender->send('<phone_number>', '<your_message>', [
 
 #### IqSms.ru (Смс-Дисконт)
 Отправка сообщений через провайдера iqsms.ru. Требует для работы установленный `curl`.
+
+Для включения данного провайдера добавьте в `.env` файл
+
+```
+NUTNET_SMS_PROVIDER=iqsmsru
+```
+
 В настройках провайдера требуется указать логин и пароль:
 ```php
 // config/nutnet-laravel-sms.php
-'provider_options' => [
-    'login' => env('NUTNET_SMS_LOGIN'),
-    'password' => env('NUTNET_SMS_PASSWORD'),
+'providers' => [
+    'iqsmsru' => [
+        'login' => '<your_login>',
+        'password' => '<your_password>',
+        'message_defaults' => []
+    ]
 ],
 ```
 
@@ -160,6 +181,8 @@ class IndexController extends Controller
     }
 }
 ```
+
+**Задать параметры сообщения по умолчанию** можно в настройках провайдера, в опции `message_defaults`.
 
 ## Использование в связке с Laravel Notifications
 

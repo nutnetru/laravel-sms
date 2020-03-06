@@ -19,8 +19,27 @@ return [
     /**
      * настройки, специфичные для провайдера
      */
-    'provider_options' => [
-        'login' => env('NUTNET_SMS_LOGIN'),
-        'password' => env('NUTNET_SMS_PASSWORD'),
+    'providers' => [
+        'log' => [
+            // данный провайдер не имеет настроек
+        ],
+        'smpp' => [
+            // все настройки провадера находятся в конфиг. файле franzose/laravel-smpp
+        ],
+        'smscru' => [
+            'login' => env('SMSCRU_LOGIN'),
+            'password' => env('SMSCRU_PASSWORD'),
+            'message_defaults' => [],
+        ],
+        'smsru' => [
+            'login' => env('SMSRU_LOGIN'),
+            'password' => env('SMSRU_PASSWORD'),
+            'message_defaults' => [],
+        ],
+        'iqsmsru' => [
+            'login' => env('IQSMS_LOGIN'),
+            'password' => env('IQSMS_PASSWORD'),
+            'message_defaults' => [],
+        ],
     ],
 ];

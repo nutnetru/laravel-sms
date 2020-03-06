@@ -15,12 +15,19 @@ class SmsSender
     private $bridge;
 
     /**
+     * @var array
+     */
+    private $defaultOptions;
+
+    /**
      * SmsSender constructor.
      * @param Provider $bridge
+     * @param array $defaultOptions
      */
-    public function __construct(Provider $bridge)
+    public function __construct(Provider $bridge, array $defaultOptions = [])
     {
         $this->bridge = $bridge;
+        $this->defaultOptions = $defaultOptions;
     }
 
     /**
@@ -31,7 +38,11 @@ class SmsSender
      */
     public function send($phone, $message, array $options = [])
     {
-        return $this->bridge->send($this->preparePhone($phone), $message, $options);
+        return $this->bridge->send(
+            $this->preparePhone($phone),
+            $message,
+            array_merge($this->defaultOptions, $options)
+        );
     }
 
     /**
@@ -45,7 +56,7 @@ class SmsSender
         return $this->bridge->sendBatch(
             array_map([$this, 'preparePhone'], $phones),
             $message,
-            $options
+            array_merge($this->defaultOptions, $options)
         );
     }
 
