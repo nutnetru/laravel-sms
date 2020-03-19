@@ -55,11 +55,14 @@ class IqSmsRu implements Provider
     public function send($phone, $message, array $options = []): bool
     {
         $result = $this->sendRequest('send', [
-            'messages' => [
-                'clientId' => Arr::get($options, 'client_id', "1"),
-                'phone' => $phone,
-                'text' => $message,
-            ],
+            'messages' => array_merge(
+                Arr::except($options, 'client_id'),
+                [
+                    'clientId' => Arr::get($options, 'client_id', "1"),
+                    'phone' => $phone,
+                    'text' => $message,
+                ]
+            ),
         ]);
 
         if ($result['status'] != self::STATUS_OK) {
@@ -91,10 +94,13 @@ class IqSmsRu implements Provider
 
         foreach (array_chunk($phones, self::PACKET_SIZE) as $phonesPacket) {
             foreach ($phonesPacket as $phone) {
-                $params['messages'][] = array(
-                    'clientId' => $clientId,
-                    'phone' => $phone,
-                    'text' => $message,
+                $params['messages'][] = array_merge(
+                    Arr::except($options, 'client_id'),
+                    [
+                        'clientId' => $clientId,
+                        'phone' => $phone,
+                        'text' => $message,
+                    ]
                 );
             }
         }

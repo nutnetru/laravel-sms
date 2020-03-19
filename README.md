@@ -149,7 +149,10 @@ NUTNET_SMS_PROVIDER=iqsmsru
     'iqsmsru' => [
         'login' => '<your_login>',
         'password' => '<your_password>',
-        'message_defaults' => []
+        'message_defaults' => [
+            // to example, sender
+            // 'sender' => 'Test',
+        ]
     ]
 ],
 ```
