@@ -39,6 +39,7 @@ return [
         'iqsmsru' => [
             'login' => env('IQSMS_LOGIN'),
             'password' => env('IQSMS_PASSWORD'),
+            'sender' => env('IQSMS_SENDER'),
             'message_defaults' => [],
         ],
     ],

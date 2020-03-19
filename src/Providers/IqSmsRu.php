@@ -34,6 +34,11 @@ class IqSmsRu implements Provider
     private $apiPassword;
 
     /**
+     * @var string
+     */
+    private $apiSender;
+
+    /**
      * IqSmsRu constructor.
      * @param array $options
      */
@@ -43,6 +48,7 @@ class IqSmsRu implements Provider
         
         $this->apiLogin = Arr::get($options, 'login');
         $this->apiPassword = Arr::get($options, 'password');
+        $this->apiSender = Arr::get($options, 'sender');
     }
 
     /**
@@ -57,6 +63,7 @@ class IqSmsRu implements Provider
         $result = $this->sendRequest('send', [
             'messages' => [
                 'clientId' => Arr::get($options, 'client_id', "1"),
+                'sender' => Arr::get($options, 'sender', $this->apiSender),
                 'phone' => $phone,
                 'text' => $message,
             ],
