@@ -11,7 +11,7 @@ return [
      * * \Nutnet\LaravelSms\Providers\Smpp (alias: smpp)
      * * \Nutnet\LaravelSms\Providers\SmscRu (alias: smscru)
      * * \Nutnet\LaravelSms\Providers\SmsRu (alias: smsru)
-     * * \Nutnet\LaravelSms\Providers\IqSmsRu (alias: iqsmsru)
+     * * \Nutnet\LaravelSms\Providers\IqSmsRu (alias: iqsms)
      * @see Nutnet\LaravelSms\Providers
      */
     'provider' => env('NUTNET_SMS_PROVIDER', 'log'),
@@ -36,7 +36,7 @@ return [
             'password' => env('SMSRU_PASSWORD'),
             'message_defaults' => [],
         ],
-        'iqsmsru' => [
+        'iqsms' => [
             'login' => env('IQSMS_LOGIN'),
             'password' => env('IQSMS_PASSWORD'),
             'message_defaults' => [],

@@ -139,14 +139,14 @@ NUTNET_SMS_PROVIDER=smscru
 Для включения данного провайдера добавьте в `.env` файл
 
 ```
-NUTNET_SMS_PROVIDER=iqsmsru
+NUTNET_SMS_PROVIDER=iqsms
 ```
 
 В настройках провайдера требуется указать логин и пароль:
 ```php
 // config/nutnet-laravel-sms.php
 'providers' => [
-    'iqsmsru' => [
+    'iqsms' => [
         'login' => '<your_login>',
         'password' => '<your_password>',
         'message_defaults' => [
