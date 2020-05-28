@@ -6,6 +6,8 @@
 
 namespace Tests\Providers;
 
+use Illuminate\Log\Logger;
+use Illuminate\Log\LogManager;
 use Nutnet\LaravelSms\Providers\Log;
 use Psr\Log\Test\TestLogger;
 use Tests\BaseTestCase;
@@ -36,6 +38,77 @@ class LogTest extends BaseTestCase
         foreach ($to as $phone) {
             $this->assertTrue($store->hasDebugThatContains($this->formatMsg($phone, $msg)));
         }
+    }
+
+    // check sending, when set single channel
+    public function testIsUsedLogChannel()
+    {
+        $channel = 'browser';
+        $writer = new TestLogger();
+
+        $store = $this
+            ->getMockBuilder(LogManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['channel'])
+            ->getMock();
+
+        $store->expects($this->once())
+            ->method('channel')
+            ->with($channel)
+            ->willReturn($writer);
+
+        $provider = new Log($store, [
+            'channels' => [$channel]
+        ]);
+
+        $this->assertEquals($writer, $provider->getWriter());
+    }
+
+    // check sending, when set multiple channels
+    public function testIsUsedLogStack()
+    {
+        $channels = ['browser', 'syslog'];
+        $writer = new Logger(new TestLogger());
+
+        $store = $this
+            ->getMockBuilder(LogManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['stack'])
+            ->getMock();
+
+        $store->expects($this->once())
+            ->method('stack')
+            ->with($channels)
+            ->willReturn($writer);
+
+        $provider = new Log($store, [
+            'channels' => $channels
+        ]);
+
+        $this->assertEquals($writer, $provider->getWriter());
+    }
+
+    // check sending, when channels is not set
+    public function testIsUsedDefaultLogger()
+    {
+        $channels = [];
+        $defaultLogDriver = new TestLogger();
+
+        $store = $this
+            ->getMockBuilder(LogManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['stack', 'channel', 'driver'])
+            ->getMock();
+
+        $store->expects($this->never())->method('stack');
+        $store->expects($this->never())->method('channel');
+        $store->method('driver')->willReturn($defaultLogDriver);
+
+        $provider = new Log($store, [
+            'channels' => $channels
+        ]);
+
+        $this->assertEquals($defaultLogDriver, $provider->getWriter()->driver());
     }
 
     private function formatMsg($to, $msg)

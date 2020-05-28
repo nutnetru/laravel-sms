@@ -37,6 +37,31 @@ php artisan vendor:publish --provider="Nutnet\LaravelSms\ServiceProvider" --tag=
 NUTNET_SMS_PROVIDER=log
 ```
 
+Для отправки сообщений в определенный канал/стек (например, в консоль браузера), используйте настройку `channels`: 
+
+```php
+// config/nutnet-laravel-sms.php
+'providers' => [
+    'log' => [
+        /**
+         * каналы, в которые публикуются сообщения
+         * оставьте пустым, если хотите использовать общие настройки логирования
+         * @see https://laravel.com/docs/5.8/logging#building-log-stacks
+        */
+        'channels' => ['slack', 'browser'], // для версий Laravel >=5.6
+    ]
+],
+```
+
+Пример настройки лог-канала для отправки сообщений в консоль браузера
+```php
+// config/logging.php
+'browser' => [
+    'driver' => 'monolog',
+    'handler' => Monolog\Handler\BrowserConsoleHandler::class,
+],
+```
+
 #### SMPP
 Отправка соообщений через протокол SMPP. Требует для работы пакет `franzose/laravel-smpp`.
 В данный момент не поддерживает передачу параметров сообщения.

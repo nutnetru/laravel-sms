@@ -21,11 +21,23 @@ class Log implements Provider
     private $logWriter;
 
     /**
-     * LogDriver constructor.
+     * Log constructor.
      * @param Writer $logWriter
+     * @param array $options
      */
-    public function __construct(Writer $logWriter)
+    public function __construct(Writer $logWriter, array $options = [])
     {
+        // support for logging messages into custom channels
+        if (!empty($options['channels']) && $this->isSupportsChannels($logWriter)) {
+            $channels = (array)$options['channels'];
+
+            if (count($channels) === 1) {
+                $logWriter = $logWriter->channel(reset($channels));
+            } else {
+                $logWriter = $logWriter->stack($channels);
+            }
+        }
+
         $this->logWriter = $logWriter;
     }
 
@@ -38,7 +50,7 @@ class Log implements Provider
      */
     public function send($phone, $text, array $options = []) : bool
     {
-        $this->logWriter->debug(sprintf(
+        $this->getWriter()->debug(sprintf(
             'Sms is sent to %s: "%s"',
             $phone,
             $text
@@ -60,5 +72,22 @@ class Log implements Provider
         }
 
         return true;
+    }
+
+    /**
+     * @return Writer
+     */
+    public function getWriter()
+    {
+        return $this->logWriter;
+    }
+
+    /**
+     * @param Writer $logger
+     * @return bool
+     */
+    private function isSupportsChannels(Writer $logger)
+    {
+        return method_exists($logger, 'channel') && method_exists($logger, 'stack');
     }
 }
