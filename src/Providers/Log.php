@@ -27,15 +27,21 @@ class Log implements Provider
      */
     public function __construct(Writer $logWriter, array $options = [])
     {
-        // support for logging messages into custom channels
-        if (!empty($options['channels']) && $this->isSupportsChannels($logWriter)) {
-            $channels = (array)$options['channels'];
+        $channels = isset($options['channels']) ? $options['channels'] : [];
+        if (!is_array($channels)) {
+            $channels = [$channels];
+        }
 
-            if (count($channels) === 1) {
-                $logWriter = $logWriter->channel(reset($channels));
-            } else {
-                $logWriter = $logWriter->stack($channels);
+        // support for logging messages into custom channels
+        if (!empty($channels)) {
+            if (!$this->isSupportsChannels($logWriter)) {
+                throw new \DomainException(sprintf(
+                    'Writer of type %s doesnt support channels.',
+                    get_class($logWriter)
+                ));
             }
+
+            $logWriter = $this->makeStackedLogger($logWriter, $channels);
         }
 
         $this->logWriter = $logWriter;
@@ -89,5 +95,21 @@ class Log implements Provider
     private function isSupportsChannels(Writer $logger)
     {
         return method_exists($logger, 'channel') && method_exists($logger, 'stack');
+    }
+
+    /**
+     * @param Writer $logWriter
+     * @param array $channels
+     * @return Writer
+     */
+    private function makeStackedLogger(Writer $logWriter, array $channels)
+    {
+        if (count($channels) > 1) {
+            $logWriter = $logWriter->stack($channels);
+        } else {
+            $logWriter = $logWriter->channel(reset($channels));
+        }
+
+        return $logWriter;
     }
 }

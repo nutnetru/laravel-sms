@@ -9,6 +9,7 @@ namespace Tests\Providers;
 use Illuminate\Log\Logger;
 use Illuminate\Log\LogManager;
 use Nutnet\LaravelSms\Providers\Log;
+use Psr\Log\NullLogger;
 use Psr\Log\Test\TestLogger;
 use Tests\BaseTestCase;
 
@@ -86,6 +87,23 @@ class LogTest extends BaseTestCase
         ]);
 
         $this->assertEquals($writer, $provider->getWriter());
+    }
+
+    public function testUsingNonStackableLoggerWithStack()
+    {
+        $channels = ['browser', 'syslog'];
+
+        $store = $this
+            ->getMockBuilder(NullLogger::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['channel'])
+            ->getMock();
+
+        $this->expectException(\DomainException::class);
+
+        new Log($store, [
+            'channels' => $channels
+        ]);
     }
 
     // check sending, when channels is not set
