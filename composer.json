@@ -27,6 +27,9 @@
         "franzose/laravel-smpp": "Required for SMPP provider",
         "zelenin/smsru": "Required for Sms.Ru provider"
     },
+    "conflict": {
+        "zelenin/smsru": "<5.0.0"
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -35,11 +38,12 @@
         }
     },
     "require-dev": {
-        "zelenin/smsru": "^4.1",
-        "phpunit/phpunit": "^7.5",
+        "zelenin/smsru": "^5.0",
+        "phpunit/phpunit": "^7.5|^8.0",
         "illuminate/log": ">=5.0",
         "franzose/laravel-smpp": "^1.1",
-        "infection/infection": "^0.10"
+        "infection/infection": "^0.26",
+        "psr/log": "^1.0"
     },
     "scripts": {
         "test": [
@@ -51,5 +55,10 @@
         "test-mutation": [
             "PHP_BINARY=phpdbg phpdbg -qrr vendor/bin/infection --ansi"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     }
 }

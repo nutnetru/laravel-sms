@@ -135,6 +135,18 @@ $sender->send('<phone_number>', '<your_message>', [
 ]);
 ```
 
+**Использовать собственный http-клиент вместо стандартного Zelenin\SmsRu\Client\Client:**
+
+Просто зарегистрируйте свой http-клиент (например, `App\Services\SmsRuHttpClient`) в DI-контейнере следующим образом:
+
+```php
+// app/Providers/AppServiceProvider.php
+public function register()
+{
+    $this->app->bind(\Zelenin\SmsRu\Client\ClientInterface::class, \App\Services\SmsRuHttpClient::class);
+}
+```
+
 #### Smsc.ru
 Отправка сообщений через провайдера Smsc.ru. Требует для работы установленный `curl`.
 

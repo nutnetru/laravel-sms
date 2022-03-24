@@ -88,7 +88,7 @@ class SmsRuTest extends BaseTestCase
             'password' => 'test',
         ]);
 
-        $this->assertInstanceOf(Api::class, $provider->getClient());
+        $this->assertInstanceOf(Api::class, $provider->getApi());
     }
 
     /**
@@ -201,10 +201,10 @@ class SmsRuTest extends BaseTestCase
                     'password' => 'test',
                 ]
             ])
-            ->setMethods(['getClient'])
+            ->setMethods(['getApi'])
             ->getMock();
 
-        $provider->method('getClient')->willReturn($client);
+        $provider->method('getApi')->willReturn($client);
 
         return [$provider, $client];
     }

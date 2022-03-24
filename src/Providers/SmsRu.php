@@ -25,7 +25,12 @@ class SmsRu implements Provider
     /**
      * @var SmsRuApi\Api
      */
-    private $client;
+    private $api;
+
+	/**
+	 * @var SmsRuApi\Client\ClientInterface
+	 */
+	private $httpClient;
 
     /**
      * @var array
@@ -41,13 +46,10 @@ class SmsRu implements Provider
         self::AUTH_API_ID => 'makeAuthApiId'
     ];
 
-    /**
-     * SmsRuDriver constructor.
-     * @param array $options
-     */
-    public function __construct(array $options)
+    public function __construct(array $options, SmsRuApi\Client\ClientInterface $httpClient = null)
     {
         $this->options = $options;
+		$this->httpClient = $httpClient ?? new SmsRuApi\Client\Client();
     }
 
     /**
@@ -59,7 +61,7 @@ class SmsRu implements Provider
      */
     public function send($phone, $text, array $options = []) : bool
     {
-        $response = $this->getClient()->smsSend(
+        $response = $this->getApi()->smsSend(
             $this->makeMessage($phone, $text, $options)
         );
 
@@ -78,7 +80,7 @@ class SmsRu implements Provider
         $smsList = array_map(function ($phone) use ($message, $options) {
             return $this->makeMessage($phone, $message, $options);
         }, $phones);
-        $response = $this->getClient()->smsSend(new SmsRuApi\Entity\SmsPool($smsList));
+        $response = $this->getApi()->smsSend(new SmsRuApi\Entity\SmsPool($smsList));
 
         return $response->code == self::CODE_OK;
     }
@@ -86,13 +88,13 @@ class SmsRu implements Provider
     /**
      * @return SmsRuApi\Api
      */
-    public function getClient()
+    public function getApi()
     {
-        if (!$this->client) {
-            return $this->client = new SmsRuApi\Api($this->getAuth());
+        if (!$this->api) {
+            return $this->api = new SmsRuApi\Api($this->getAuth(), $this->httpClient);
         }
 
-        return $this->client;
+        return $this->api;
     }
 
     /**
