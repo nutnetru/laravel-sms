@@ -2,6 +2,8 @@
     "name": "nutnet/laravel-sms",
     "description": "Package for sending SMS form your Laravel app, includes pre-installed sms providers and your custom.",
     "require": {
+        "php": "^8.0",
+        "ext-curl": "*",
         "illuminate/support": ">=5.0"
     },
     "keywords": [
@@ -43,11 +45,16 @@
         "illuminate/log": ">=5.0",
         "franzose/laravel-smpp": "^1.1",
         "infection/infection": "^0.26",
-        "psr/log": "^1.0"
+        "psr/log": "^1.0",
+        "phpstan/phpstan": "^1.5",
+        "illuminate/notifications": ">=5.0"
     },
     "scripts": {
         "test": [
             "phpunit"
+        ],
+        "static-analyze": [
+            "phpstan"
         ],
         "test-coverage": [
             "phpdbg -qrr ./vendor/bin/phpunit --coverage-text"

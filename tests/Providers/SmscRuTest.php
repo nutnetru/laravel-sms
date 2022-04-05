@@ -96,10 +96,6 @@ class SmscRuTest extends BaseTestCase
                 false,
                 false,
             ],
-            [
-                0,
-                false,
-            ]
         ];
     }
 }

@@ -3,40 +3,13 @@ namespace Nutnet\LaravelSms;
 
 use Nutnet\LaravelSms\Contracts\Provider;
 
-/**
- * Class SmsSender
- * @package App\Services\Sms
- */
 class SmsSender
 {
-    /**
-     * @var Provider
-     */
-    private $bridge;
-
-    /**
-     * @var array
-     */
-    private $defaultOptions;
-
-    /**
-     * SmsSender constructor.
-     * @param Provider $bridge
-     * @param array $defaultOptions
-     */
-    public function __construct(Provider $bridge, array $defaultOptions = [])
+    public function __construct(private Provider $bridge, private array $defaultOptions = [])
     {
-        $this->bridge = $bridge;
-        $this->defaultOptions = $defaultOptions;
     }
 
-    /**
-     * @param $phone
-     * @param $message
-     * @param array $options
-     * @return bool
-     */
-    public function send($phone, $message, array $options = [])
+    public function send(string $phone, string $message, array $options = []): bool
     {
         return $this->bridge->send(
             $this->preparePhone($phone),
@@ -45,13 +18,7 @@ class SmsSender
         );
     }
 
-    /**
-     * @param array $phones
-     * @param $message
-     * @param array $options
-     * @return bool
-     */
-    public function sendBatch(array $phones, $message, array $options = [])
+    public function sendBatch(array $phones, string $message, array $options = []): bool
     {
         return $this->bridge->sendBatch(
             array_map([$this, 'preparePhone'], $phones),
@@ -60,8 +27,8 @@ class SmsSender
         );
     }
 
-    private function preparePhone($phone)
+    private function preparePhone(string $phone): string
     {
-        return preg_replace('/[^\d]+/', '', $phone);
+        return (string)preg_replace('/[^\d]+/', '', $phone);
     }
 }

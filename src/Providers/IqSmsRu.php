@@ -12,31 +12,19 @@ use Illuminate\Support\Arr;
 
 /**
  * @link https://iqsms.ru
- * Class IqSmsRu
- * @package Nutnet\LaravelSms\Providers
  */
 class IqSmsRu implements Provider
 {
-    const STATUS_OK = 'ok';
-    const STATUS_ACCEPTED = 'accepted';
+    private const STATUS_OK = 'ok';
+	private const STATUS_ACCEPTED = 'accepted';
 
-    const API_URL = 'http://json.gate.iqsms.ru';
-    const PACKET_SIZE = 20;
+	private const API_URL = 'http://json.gate.iqsms.ru';
+	private const PACKET_SIZE = 20;
 
-    /**
-     * @var string
-     */
-    private $apiLogin;
+    private string $apiLogin;
 
-    /**
-     * @var string
-     */
-    private $apiPassword;
+    private string $apiPassword;
 
-    /**
-     * IqSmsRu constructor.
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->validateOptions($options);
@@ -46,13 +34,9 @@ class IqSmsRu implements Provider
     }
 
     /**
-     * @param $phone
-     * @param $message
-     * @param array $options
-     * @return bool
      * @throws SmsSendingFailedException
      */
-    public function send($phone, $message, array $options = []): bool
+    public function send(string $phone, string $message, array $options = []): bool
     {
         $result = $this->sendRequest('send', [
             'messages' => array_merge(
@@ -79,13 +63,9 @@ class IqSmsRu implements Provider
     }
 
     /**
-     * @param array $phones
-     * @param $message
-     * @param array $options
-     * @return bool
      * @throws SmsSendingFailedException
      */
-    public function sendBatch(array $phones, $message, array $options = []): bool
+    public function sendBatch(array $phones, string $message, array $options = []): bool
     {
         $params = [
             'messages' => []
@@ -111,12 +91,9 @@ class IqSmsRu implements Provider
     }
 
     /**
-     * @param $uri
-     * @param null $params
-     * @return mixed
      * @throws SmsSendingFailedException
      */
-    private function sendRequest($uri, $params = null)
+    private function sendRequest(string $uri, ?array $params = null): array|bool
     {
         $client = curl_init($this->getUrl($uri));
         curl_setopt_array($client, array(
@@ -143,20 +120,12 @@ class IqSmsRu implements Provider
         return $decodedBody;
     }
 
-    /**
-     * @param $uri
-     * @return string
-     */
-    private function getUrl($uri)
+    private function getUrl(string $uri): string
     {
         return self::API_URL . '/' . $uri . '/';
     }
 
-    /**
-     * @param null $params
-     * @return false|string
-     */
-    private function makePacket($params = null)
+    private function makePacket(?array $params = null): string
     {
         $params = $params ?: [];
         $params['login'] = $this->apiLogin;
@@ -165,10 +134,7 @@ class IqSmsRu implements Provider
         return json_encode(array_filter($params));
     }
 
-    /**
-     * @param array $options
-     */
-    private function validateOptions(array $options)
+    private function validateOptions(array $options): void
     {
         if (empty($options['login']) || empty($options['password'])) {
             throw new \InvalidArgumentException('Login and password is required.');

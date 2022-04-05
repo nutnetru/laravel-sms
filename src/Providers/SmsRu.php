@@ -10,116 +10,78 @@ use Illuminate\Support\Arr;
 use Nutnet\LaravelSms\Contracts\Provider;
 use Zelenin\SmsRu as SmsRuApi;
 
-/**
- * Class SmsRu
- * @package Nutnet\LaravelSms\Providers
- */
 class SmsRu implements Provider
 {
-    const CODE_OK = 100;
+    public const CODE_OK = 100;
 
-    const AUTH_STANDARD = 'standard';
-    const AUTH_SECURED = 'secured';
-    const AUTH_API_ID = 'api_id';
+	public const AUTH_STANDARD = 'standard';
+    public const AUTH_SECURED = 'secured';
+    public const AUTH_API_ID = 'api_id';
 
-    /**
-     * @var SmsRuApi\Api
-     */
-    private $api;
+	private const AUTH_TYPES = [
+		self::AUTH_STANDARD => 'makeAuthStandard',
+		self::AUTH_SECURED => 'makeAuthSecured',
+		self::AUTH_API_ID => 'makeAuthApiId'
+	];
 
-	/**
-	 * @var SmsRuApi\Client\ClientInterface
-	 */
-	private $httpClient;
+    private ?SmsRuApi\Api $api = null;
 
-    /**
-     * @var array
-     */
-    private $options;
+	private SmsRuApi\Client\ClientInterface $httpClient;
 
-    /**
-     * @var array
-     */
-    private $authTypes = [
-        self::AUTH_STANDARD => 'makeAuthStandard',
-        self::AUTH_SECURED => 'makeAuthSecured',
-        self::AUTH_API_ID => 'makeAuthApiId'
-    ];
-
-    public function __construct(array $options, SmsRuApi\Client\ClientInterface $httpClient = null)
+    public function __construct(private array $options, SmsRuApi\Client\ClientInterface $httpClient = null)
     {
-        $this->options = $options;
-		$this->httpClient = $httpClient ?? new SmsRuApi\Client\Client();
+		$this->httpClient = $httpClient !== null ? $httpClient : new SmsRuApi\Client\Client();
     }
 
     /**
-     * @param $phone
-     * @param $text
-     * @param array $options
-     * @return bool
      * @throws SmsRuApi\Exception\Exception
      */
-    public function send($phone, $text, array $options = []) : bool
+    public function send(string $phone, string $text, array $options = []) : bool
     {
         $response = $this->getApi()->smsSend(
             $this->makeMessage($phone, $text, $options)
         );
 
-        return $response->code == self::CODE_OK;
+        return $response->code == static::CODE_OK;
     }
 
     /**
-     * @param array $phones
-     * @param $message
-     * @param array $options
-     * @return bool
+	 * @param array<array-key, string> $phones
      * @throws SmsRuApi\Exception\Exception
      */
-    public function sendBatch(array $phones, $message, array $options = []) : bool
+    public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         $smsList = array_map(function ($phone) use ($message, $options) {
             return $this->makeMessage($phone, $message, $options);
         }, $phones);
         $response = $this->getApi()->smsSend(new SmsRuApi\Entity\SmsPool($smsList));
 
-        return $response->code == self::CODE_OK;
+        return $response->code == static::CODE_OK;
     }
 
-    /**
-     * @return SmsRuApi\Api
-     */
-    public function getApi()
+    public function getApi(): SmsRuApi\Api
     {
-        if (!$this->api) {
+        if ($this->api === null) {
             return $this->api = new SmsRuApi\Api($this->getAuth(), $this->httpClient);
         }
 
         return $this->api;
     }
 
-    /**
-     * @return SmsRuApi\Auth\AuthInterface
-     */
-    private function getAuth()
+    private function getAuth(): SmsRuApi\Auth\AuthInterface
     {
         $authType = Arr::get($this->options, 'auth_type', self::AUTH_STANDARD);
 
-        if (!array_key_exists($authType, $this->authTypes)) {
+        if (!array_key_exists($authType, self::AUTH_TYPES)) {
             throw new \InvalidArgumentException(sprintf('Unsupported auth type: %s', $authType));
         }
 
-        $authBuilder = $this->authTypes[$authType];
+        $authBuilder = self::AUTH_TYPES[$authType];
 
         return $this->$authBuilder();
     }
 
-    /**
-     * @param $phone
-     * @param $text
-     * @param array $options
-     * @return SmsRuApi\Entity\Sms
-     */
-    private function makeMessage($phone, $text, array $options = [])
+    private function makeMessage(string $phone, string $text, array $options = []): SmsRuApi\Entity\Sms
     {
         $message = new SmsRuApi\Entity\Sms($phone, $text);
 
@@ -133,40 +95,31 @@ class SmsRu implements Provider
         return $message;
     }
 
-    /**
-     * @return SmsRuApi\Auth\LoginPasswordAuth
-     */
-    private function makeAuthStandard()
+    private function makeAuthStandard(): SmsRuApi\Auth\LoginPasswordAuth
     {
         return new SmsRuApi\Auth\LoginPasswordAuth(
             Arr::get($this->options, 'login'),
             Arr::get($this->options, 'password'),
-            Arr::get($this->options, 'partner_id')
+            Arr::get($this->options, 'partner_id'),
         );
     }
 
-    /**
-     * @return SmsRuApi\Auth\LoginPasswordSecureAuth
-     */
-    private function makeAuthSecured()
+    private function makeAuthSecured(): SmsRuApi\Auth\LoginPasswordSecureAuth
     {
         return new SmsRuApi\Auth\LoginPasswordSecureAuth(
             Arr::get($this->options, 'login'),
             Arr::get($this->options, 'password'),
             Arr::get($this->options, 'api_id'),
             null,
-            Arr::get($this->options, 'partner_id')
+            Arr::get($this->options, 'partner_id'),
         );
     }
 
-    /**
-     * @return SmsRuApi\Auth\ApiIdAuth
-     */
-    private function makeAuthApiId()
+    private function makeAuthApiId(): SmsRuApi\Auth\ApiIdAuth
     {
         return new SmsRuApi\Auth\ApiIdAuth(
             Arr::get($this->options, 'api_id'),
-            Arr::get($this->options, 'partner_id')
+            Arr::get($this->options, 'partner_id'),
         );
     }
 }

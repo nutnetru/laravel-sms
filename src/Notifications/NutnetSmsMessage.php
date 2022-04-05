@@ -6,68 +6,39 @@
 
 namespace Nutnet\LaravelSms\Notifications;
 
-/**
- * Class NutnetSmsMessage
- * @package Nutnet\LaravelSms\Notifications
- */
 class NutnetSmsMessage
 {
-    /**
-     * @var string
-     */
-    private $content;
+    private string $content;
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private array $options = [];
 
-    /**
-     * NutnetSmsMessage constructor.
-     * @param $text
-     * @param array $options
-     */
-    public function __construct($text, array $options = [])
+    public function __construct(string $text, array $options = [])
     {
         $this
             ->content($text)
             ->options($options);
     }
 
-    /**
-     * @param $text
-     * @return $this
-     */
-    public function content($text)
+    public function content(string $text): static
     {
         $this->content = $text;
 
         return $this;
     }
 
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function options(array $options)
+    public function options(array $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }

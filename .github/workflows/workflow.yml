@@ -16,5 +16,11 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run test suite
+    - name: Run static analyze
+      run: composer run-script static-analyze
+
+    - name: Run unit tests
       run: composer run-script test
+
+    - name: Run mutation tests
+      run: composer run-script test-mutation

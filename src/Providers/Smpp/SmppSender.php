@@ -10,10 +10,6 @@ use SMPP;
 use SmppAddress;
 use LaravelSmpp\SmppService;
 
-/**
- * Class SmppSender
- * @package Nutnet\LaravelSms\Providers\Smpp
- */
 class SmppSender extends SmppService
 {
     /**

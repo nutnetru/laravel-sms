@@ -9,52 +9,27 @@ namespace Nutnet\LaravelSms\Providers;
 use Psr\Log\LoggerInterface as Writer;
 use Nutnet\LaravelSms\Contracts\Provider;
 
-/**
- * Class Log
- * @package Nutnet\LaravelSms\Providers
- */
 class Log implements Provider
 {
-    /**
-     * @var Writer
-     */
-    private $logWriter;
+    private Writer $logWriter;
 
-    /**
-     * Log constructor.
-     * @param Writer $logWriter
-     * @param array $options
-     */
     public function __construct(Writer $logWriter, array $options = [])
     {
-        $channels = isset($options['channels']) ? $options['channels'] : [];
+        $channels = $options['channels'] ?? [];
+
         if (!is_array($channels)) {
             $channels = [$channels];
         }
 
         // support for logging messages into custom channels
         if (!empty($channels)) {
-            if (!$this->isSupportsChannels($logWriter)) {
-                throw new \DomainException(sprintf(
-                    'Writer of type %s doesnt support channels.',
-                    get_class($logWriter)
-                ));
-            }
-
             $logWriter = $this->makeStackedLogger($logWriter, $channels);
         }
 
         $this->logWriter = $logWriter;
     }
 
-    /**
-     * Send single sms
-     * @param $phone
-     * @param $text
-     * @param $options
-     * @return mixed
-     */
-    public function send($phone, $text, array $options = []) : bool
+    public function send(string $phone, string $text, array $options = []) : bool
     {
         $this->getWriter()->debug(sprintf(
             'Sms is sent to %s: "%s"',
@@ -65,13 +40,7 @@ class Log implements Provider
         return true;
     }
 
-    /**
-     * @param array $phones
-     * @param $message
-     * @param $options
-     * @return bool
-     */
-    public function sendBatch(array $phones, $message, array $options = []) : bool
+    public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         foreach ($phones as $phone) {
             $this->send($phone, $message);
@@ -80,30 +49,20 @@ class Log implements Provider
         return true;
     }
 
-    /**
-     * @return Writer
-     */
-    public function getWriter()
+    public function getWriter(): Writer
     {
         return $this->logWriter;
     }
 
-    /**
-     * @param Writer $logger
-     * @return bool
-     */
-    private function isSupportsChannels(Writer $logger)
+    private function makeStackedLogger(Writer $logWriter, array $channels): Writer
     {
-        return method_exists($logger, 'channel') && method_exists($logger, 'stack');
-    }
+		if (!method_exists($logWriter, 'channel') || !method_exists($logWriter, 'stack')) {
+			throw new \DomainException(sprintf(
+				'Writer of type %s doesnt support channels.',
+				get_class($logWriter)
+			));
+		}
 
-    /**
-     * @param Writer $logWriter
-     * @param array $channels
-     * @return Writer
-     */
-    private function makeStackedLogger(Writer $logWriter, array $channels)
-    {
         if (count($channels) > 1) {
             $logWriter = $logWriter->stack($channels);
         } else {

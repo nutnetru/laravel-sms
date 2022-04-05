@@ -5,11 +5,6 @@
  */
 namespace Nutnet\LaravelSms\Exceptions;
 
-/**
- * Class SmsSendingFailedException
- * @package Nutnet\LaravelSms\Exceptions
- */
 class SmsSendingFailedException extends \Exception
 {
-
 }

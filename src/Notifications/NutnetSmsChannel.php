@@ -9,31 +9,13 @@ namespace Nutnet\LaravelSms\Notifications;
 use Nutnet\LaravelSms\SmsSender;
 use Illuminate\Notifications\Notification;
 
-/**
- * Class NutnetSmsChannel
- * @package Nutnet\LaravelSms\Notifications
- */
 class NutnetSmsChannel
 {
-    /**
-     * @var SmsSender
-     */
-    private $sender;
-
-    /**
-     * NutnetSmsChannel constructor.
-     * @param SmsSender $sender
-     */
-    public function __construct(SmsSender $sender)
+    public function __construct(private SmsSender $sender)
     {
-        $this->sender = $sender;
     }
 
-    /**
-     * @param $notifiable
-     * @param Notification $notification
-     */
-    public function send($notifiable, Notification $notification)
+    public function send($notifiable, Notification $notification): void
     {
         $phone = $notifiable->routeNotificationFor('nutnet_sms');
 
@@ -41,11 +23,14 @@ class NutnetSmsChannel
             return;
         }
 
-        /** @var NutnetSmsMessage $message */
+		if (!method_exists($notification, 'toNutnetSms')) {
+			throw new \InvalidArgumentException('$notification must implement toNutnetSms method');
+		}
+
         $message = $notification->toNutnetSms($notifiable);
 
         if (!($message instanceof NutnetSmsMessage)) {
-            $message = new NutnetSmsMessage($message);
+            $message = new NutnetSmsMessage((string)$message);
         }
 
         $this->sender->send($phone, $message->getContent(), $message->getOptions());

@@ -9,45 +9,20 @@ namespace Nutnet\LaravelSms\Providers;
 use Nutnet\LaravelSms\Contracts\Provider;
 use Nutnet\LaravelSms\Providers\Smpp\SmppSender;
 
-/**
- * Class Smpp
- * @package App\Services\Sms\Bridges\Smpp
- */
 class Smpp implements Provider
 {
-    /**
-     * @var SmppSender
-     */
-    private $smpp;
-
-    /**
-     * @var array
-     */
-    private $options;
-
-    /**
-     * SmppBridge constructor.
-     * @param SmppSender $smppService
-     * @param array $options
-     */
-    public function __construct(SmppSender $smppService, array $options = [])
+    public function __construct(private SmppSender $smpp)
     {
-        $this->smpp = $smppService;
-        $this->options = $options;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function send($phone, $text, array $options = []) : bool
+    public function send(string $phone, string $text, array $options = []) : bool
     {
-        return $this->smpp->sendOne($phone, $text);
+        $this->smpp->sendOne((int)$phone, $text);
+
+		return true;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function sendBatch(array $phones, $message, array $options = []) : bool
+    public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         $this->smpp->sendBulk($phones, $message);
 

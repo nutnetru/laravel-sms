@@ -8,47 +8,27 @@ namespace Nutnet\LaravelSms\Providers;
 
 use Nutnet\LaravelSms\Contracts\Provider;
 
-/**
- * Class SmscRu
- * @package Nutnet\LaravelSms\Providers
- */
 class SmscRu implements Provider
 {
-    const BASE_URL = 'https://smsc.ru/sys/send.php';
-    const PHONE_DELIMITER = ';';
+	public const PHONE_DELIMITER = ';';
+    private const BASE_URL = 'https://smsc.ru/sys/send.php';
 
-    /**
-     * @var mixed|null
-     */
-    private $login;
+    private ?string $login;
 
-    /**
-     * @var mixed|null
-     */
-    private $password;
+    private ?string $password;
 
-    /**
-     * SmscRu constructor.
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->login = $options['login'] ?? null;
         $this->password = $options['password'] ?? null;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function send($phone, $text, array $options = []) : bool
+    public function send(string $phone, string $text, array $options = []) : bool
     {
         return $this->sendBatch([$phone], $text, $options);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function sendBatch(array $phones, $message, array $options = []) : bool
+    public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         $response = $this->doRequest(array_merge(
             [
@@ -68,11 +48,7 @@ class SmscRu implements Provider
         return !isset($response['error']);
     }
 
-    /**
-     * @param $httpQuery
-     * @return mixed
-     */
-    protected function doRequest($httpQuery)
+    protected function doRequest(array $httpQuery): array|bool
     {
         $url = self::BASE_URL.'?'.http_build_query($httpQuery);
 
