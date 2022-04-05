@@ -39,7 +39,7 @@
     },
     "require-dev": {
         "zelenin/smsru": "^5.0",
-        "phpunit/phpunit": "^7.5|^8.0",
+        "phpunit/phpunit": "^9.3",
         "illuminate/log": ">=5.0",
         "franzose/laravel-smpp": "^1.1",
         "infection/infection": "^0.26",
