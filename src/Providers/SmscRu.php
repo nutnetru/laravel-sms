@@ -7,6 +7,7 @@
 namespace Nutnet\LaravelSms\Providers;
 
 use Nutnet\LaravelSms\Contracts\Provider;
+use Nutnet\LaravelSms\Helpers\CurlHelper;
 
 class SmscRu implements Provider
 {
@@ -17,17 +18,26 @@ class SmscRu implements Provider
 
     private ?string $password;
 
+	/**
+	 * @param array{login?: ?string, password?: ?string} $options
+	 */
     public function __construct(array $options)
     {
         $this->login = $options['login'] ?? null;
         $this->password = $options['password'] ?? null;
     }
 
+	/**
+	 * @param array<array-key, mixed> $options
+	 */
     public function send(string $phone, string $text, array $options = []) : bool
     {
         return $this->sendBatch([$phone], $text, $options);
     }
 
+	/**
+	 * @param array<array-key, mixed> $options
+	 */
     public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         $response = $this->doRequest(array_merge(
@@ -48,17 +58,21 @@ class SmscRu implements Provider
         return !isset($response['error']);
     }
 
+	/**
+	 * @param array<array-key, mixed> $httpQuery
+	 * @return array<array-key, mixed>|bool
+	 */
     protected function doRequest(array $httpQuery): array|bool
     {
-        $url = self::BASE_URL.'?'.http_build_query($httpQuery);
+        $ch = CurlHelper::init(self::BASE_URL . '?' . http_build_query($httpQuery));
 
-        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        $response = json_decode(curl_exec($ch), true);
-        curl_close($ch);
+
+		$response = CurlHelper::execJsonArray($ch);
+		CurlHelper::close($ch);
 
         return $response;
     }

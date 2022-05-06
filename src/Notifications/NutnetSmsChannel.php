@@ -6,6 +6,7 @@
 
 namespace Nutnet\LaravelSms\Notifications;
 
+use Illuminate\Notifications\RoutesNotifications;
 use Nutnet\LaravelSms\SmsSender;
 use Illuminate\Notifications\Notification;
 
@@ -15,8 +16,15 @@ class NutnetSmsChannel
     {
     }
 
-    public function send($notifiable, Notification $notification): void
+    public function send(object $notifiable, Notification $notification): void
     {
+		if (!method_exists($notifiable, 'routeNotificationFor')) {
+			throw new \InvalidArgumentException(\sprintf(
+				'$notifiable must use trait %s or implement "routeNotificationFor" method',
+				RoutesNotifications::class,
+			));
+		}
+
         $phone = $notifiable->routeNotificationFor('nutnet_sms');
 
         if (!$phone) {

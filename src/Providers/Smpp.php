@@ -15,6 +15,9 @@ class Smpp implements Provider
     {
     }
 
+	/**
+	 * @param array<array-key, mixed> $options
+	 */
     public function send(string $phone, string $text, array $options = []) : bool
     {
         $this->smpp->sendOne((int)$phone, $text);
@@ -22,6 +25,9 @@ class Smpp implements Provider
 		return true;
     }
 
+	/**
+	 * @param array<array-key, mixed> $options
+	 */
     public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         $this->smpp->sendBulk($phones, $message);

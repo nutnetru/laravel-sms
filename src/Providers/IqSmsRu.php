@@ -9,6 +9,7 @@ namespace Nutnet\LaravelSms\Providers;
 use Nutnet\LaravelSms\Contracts\Provider;
 use Nutnet\LaravelSms\Exceptions\SmsSendingFailedException;
 use Illuminate\Support\Arr;
+use Nutnet\LaravelSms\Helpers\CurlHelper;
 
 /**
  * @link https://iqsms.ru
@@ -25,15 +26,26 @@ class IqSmsRu implements Provider
 
     private string $apiPassword;
 
+	/**
+	 * @param array{login?: ?string, password?: ?string}&array<array-key, mixed> $options
+	 */
     public function __construct(array $options)
     {
         $this->validateOptions($options);
+
+		$login = Arr::get($options, 'login');
+		$password = Arr::get($options, 'password');
+
+		if (!is_string($login) || !is_string($password)) {
+			throw new \InvalidArgumentException('Login and Password must be strings');
+		}
         
-        $this->apiLogin = Arr::get($options, 'login');
-        $this->apiPassword = Arr::get($options, 'password');
+        $this->apiLogin = $login;
+        $this->apiPassword = $password;
     }
 
     /**
+	 * @param array{client_id?: ?string}&array<array-key, mixed> $options
      * @throws SmsSendingFailedException
      */
     public function send(string $phone, string $message, array $options = []): bool
@@ -42,7 +54,7 @@ class IqSmsRu implements Provider
             'messages' => array_merge(
                 Arr::except($options, 'client_id'),
                 [
-                    'clientId' => Arr::get($options, 'client_id', "1"),
+                    'clientId' => Arr::get($options, 'client_id', '1'),
                     'phone' => $phone,
                     'text' => $message,
                 ]
@@ -53,16 +65,19 @@ class IqSmsRu implements Provider
             throw new SmsSendingFailedException("Failed to send request");
         }
 
-        foreach ($result['messages'] as $message) {
-            if ($message['status'] != self::STATUS_ACCEPTED) {
-                throw new SmsSendingFailedException("Failed to send sms with status: " . $message['status']);
-            }
-        }
+		if (array_key_exists('messages', $result)) {
+			foreach ($result['messages'] as $message) {
+				if ($message['status'] != self::STATUS_ACCEPTED) {
+					throw new SmsSendingFailedException("Failed to send sms with status: " . $message['status']);
+				}
+			}
+		}
 
         return true;
     }
 
     /**
+	 * @param array{client_id?: ?string}&array<array-key, mixed> $options
      * @throws SmsSendingFailedException
      */
     public function sendBatch(array $phones, string $message, array $options = []): bool
@@ -91,11 +106,14 @@ class IqSmsRu implements Provider
     }
 
     /**
+	 * @param ?array<array-key, mixed> $params
      * @throws SmsSendingFailedException
+	 * @return array{status: string, messages?: list<array{status: string}>}
      */
-    private function sendRequest(string $uri, ?array $params = null): array|bool
+    private function sendRequest(string $uri, ?array $params = null): array
     {
-        $client = curl_init($this->getUrl($uri));
+        $client = CurlHelper::init($this->getUrl($uri));
+
         curl_setopt_array($client, array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
@@ -104,20 +122,19 @@ class IqSmsRu implements Provider
             CURLOPT_POSTFIELDS => $this->makePacket($params),
         ));
 
-        $body = curl_exec($client);
-        curl_close($client);
+		try {
+			$response = CurlHelper::execJsonArray($client);
+		} catch (\JsonException $e) {
+			throw new SmsSendingFailedException('Response body is not valid json: ' . $e->getMessage());
+		} finally {
+			CurlHelper::close($client);
+		}
 
-        if (empty($body)) {
-            throw new SmsSendingFailedException('IQSms sends empty response.');
-        }
+		if (!array_key_exists('status', $response)) {
+			throw new SmsSendingFailedException('Response body does not contain required "status" field');
+		}
 
-        $decodedBody = json_decode($body, true);
-
-        if (is_null($decodedBody)) {
-            throw new SmsSendingFailedException('Response body is not valid json.');
-        }
-
-        return $decodedBody;
+		return $response;
     }
 
     private function getUrl(string $uri): string
@@ -125,15 +142,21 @@ class IqSmsRu implements Provider
         return self::API_URL . '/' . $uri . '/';
     }
 
+	/**
+	 * @param ?array<array-key, mixed> $params
+	 */
     private function makePacket(?array $params = null): string
     {
         $params = $params ?: [];
         $params['login'] = $this->apiLogin;
         $params['password'] = $this->apiPassword;
 
-        return json_encode(array_filter($params));
+        return (string)json_encode(array_filter($params));
     }
 
+	/**
+	 * @param array{login?: ?string, password?: ?string}&array<array-key, mixed> $options
+	 */
     private function validateOptions(array $options): void
     {
         if (empty($options['login']) || empty($options['password'])) {
