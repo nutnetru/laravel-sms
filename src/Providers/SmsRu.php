@@ -14,31 +14,31 @@ class SmsRu implements Provider
 {
     public const CODE_OK = 100;
 
-	public const AUTH_STANDARD = 'standard';
+    public const AUTH_STANDARD = 'standard';
     public const AUTH_SECURED = 'secured';
     public const AUTH_API_ID = 'api_id';
 
-	private const AUTH_TYPES = [
-		self::AUTH_STANDARD => 'makeAuthStandard',
-		self::AUTH_SECURED => 'makeAuthSecured',
-		self::AUTH_API_ID => 'makeAuthApiId'
-	];
+    private const AUTH_TYPES = [
+        self::AUTH_STANDARD => 'makeAuthStandard',
+        self::AUTH_SECURED => 'makeAuthSecured',
+        self::AUTH_API_ID => 'makeAuthApiId'
+    ];
 
     private ?SmsRuApi\Api $api = null;
 
-	private SmsRuApi\Client\ClientInterface $httpClient;
+    private SmsRuApi\Client\ClientInterface $httpClient;
 
-	/**
-	 * @param array<array-key, mixed> $options
-	 * @param SmsRuApi\Client\ClientInterface|null $httpClient
-	 */
+    /**
+     * @param array<array-key, mixed> $options
+     * @param SmsRuApi\Client\ClientInterface|null $httpClient
+     */
     public function __construct(private array $options, SmsRuApi\Client\ClientInterface $httpClient = null)
     {
-		$this->httpClient = $httpClient !== null ? $httpClient : new SmsRuApi\Client\Client();
+        $this->httpClient = $httpClient !== null ? $httpClient : new SmsRuApi\Client\Client();
     }
 
     /**
-	 * @param array<array-key, mixed> $options
+     * @param array<array-key, mixed> $options
      * @throws SmsRuApi\Exception\Exception
      */
     public function send(string $phone, string $text, array $options = []) : bool
@@ -51,8 +51,8 @@ class SmsRu implements Provider
     }
 
     /**
-	 * @param array<array-key, string> $phones
-	 * @param array<array-key, mixed> $options
+     * @param array<array-key, string> $phones
+     * @param array<array-key, mixed> $options
      * @throws SmsRuApi\Exception\Exception
      */
     public function sendBatch(array $phones, string $message, array $options = []) : bool
@@ -87,9 +87,9 @@ class SmsRu implements Provider
         return $this->$authBuilder();
     }
 
-	/**
-	 * @param array<array-key, mixed> $options
-	 */
+    /**
+     * @param array<array-key, mixed> $options
+     */
     private function makeMessage(string $phone, string $text, array $options = []): SmsRuApi\Entity\Sms
     {
         $message = new SmsRuApi\Entity\Sms($phone, $text);
@@ -107,9 +107,9 @@ class SmsRu implements Provider
     private function makeAuthStandard(): SmsRuApi\Auth\LoginPasswordAuth
     {
         return new SmsRuApi\Auth\LoginPasswordAuth(
-			$this->getOptionString('login'),
+            $this->getOptionString('login'),
             $this->getOptionString('password'),
-			$this->getOptionStringOrNull('partner_id'),
+            $this->getOptionStringOrNull('partner_id'),
         );
     }
 
@@ -127,19 +127,19 @@ class SmsRu implements Provider
     private function makeAuthApiId(): SmsRuApi\Auth\ApiIdAuth
     {
         return new SmsRuApi\Auth\ApiIdAuth(
-			$this->getOptionString( 'api_id'),
-			$this->getOptionStringOrNull('partner_id'),
+            $this->getOptionString( 'api_id'),
+            $this->getOptionStringOrNull('partner_id'),
         );
     }
 
-	private function getOptionStringOrNull(string $name, ?string $default = null): ?string {
-		$value = Arr::get($this->options, $name, $default);
+    private function getOptionStringOrNull(string $name, ?string $default = null): ?string {
+        $value = Arr::get($this->options, $name, $default);
 
-		return is_scalar($value) ? (string)$value : null;
-	}
+        return is_scalar($value) ? (string)$value : null;
+    }
 
-	private function getOptionString(string $name, string $default = null): string
-	{
-		return (string)$this->getOptionStringOrNull($name, $default);
-	}
+    private function getOptionString(string $name, string $default = null): string
+    {
+        return (string)$this->getOptionStringOrNull($name, $default);
+    }
 }

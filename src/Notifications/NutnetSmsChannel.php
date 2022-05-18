@@ -18,12 +18,12 @@ class NutnetSmsChannel
 
     public function send(object $notifiable, Notification $notification): void
     {
-		if (!method_exists($notifiable, 'routeNotificationFor')) {
-			throw new \InvalidArgumentException(\sprintf(
-				'$notifiable must use trait %s or implement "routeNotificationFor" method',
-				RoutesNotifications::class,
-			));
-		}
+        if (!method_exists($notifiable, 'routeNotificationFor')) {
+            throw new \InvalidArgumentException(\sprintf(
+                '$notifiable must use trait %s or implement "routeNotificationFor" method',
+                RoutesNotifications::class,
+            ));
+        }
 
         $phone = $notifiable->routeNotificationFor('nutnet_sms');
 
@@ -31,9 +31,9 @@ class NutnetSmsChannel
             return;
         }
 
-		if (!method_exists($notification, 'toNutnetSms')) {
-			throw new \InvalidArgumentException('$notification must implement toNutnetSms method');
-		}
+        if (!method_exists($notification, 'toNutnetSms')) {
+            throw new \InvalidArgumentException('$notification must implement toNutnetSms method');
+        }
 
         $message = $notification->toNutnetSms($notifiable);
 

@@ -13,9 +13,9 @@ class Log implements Provider
 {
     private Writer $logWriter;
 
-	/**
-	 * @param array{channels?: null|string|list<string>}&array<array-key, mixed> $options
-	 */
+    /**
+     * @param array{channels?: null|string|list<string>}&array<array-key, mixed> $options
+     */
     public function __construct(Writer $logWriter, array $options = [])
     {
         $channels = $options['channels'] ?? [];
@@ -32,9 +32,9 @@ class Log implements Provider
         $this->logWriter = $logWriter;
     }
 
-	/**
-	 * @param array<array-key, mixed> $options
-	 */
+    /**
+     * @param array<array-key, mixed> $options
+     */
     public function send(string $phone, string $text, array $options = []) : bool
     {
         $this->getWriter()->debug(sprintf(
@@ -46,9 +46,9 @@ class Log implements Provider
         return true;
     }
 
-	/**
-	 * @param array<array-key, mixed> $options
-	 */
+    /**
+     * @param array<array-key, mixed> $options
+     */
     public function sendBatch(array $phones, string $message, array $options = []) : bool
     {
         foreach ($phones as $phone) {
@@ -63,17 +63,17 @@ class Log implements Provider
         return $this->logWriter;
     }
 
-	/**
-	 * @param list<string> $channels
-	 */
+    /**
+     * @param list<string> $channels
+     */
     private function makeStackedLogger(Writer $logWriter, array $channels): Writer
     {
-		if (!method_exists($logWriter, 'channel') || !method_exists($logWriter, 'stack')) {
-			throw new \DomainException(sprintf(
-				'Writer of type %s doesnt support channels.',
-				get_class($logWriter)
-			));
-		}
+        if (!method_exists($logWriter, 'channel') || !method_exists($logWriter, 'stack')) {
+            throw new \DomainException(sprintf(
+                'Writer of type %s doesnt support channels.',
+                get_class($logWriter)
+            ));
+        }
 
         if (count($channels) > 1) {
             $logWriter = $logWriter->stack($channels);

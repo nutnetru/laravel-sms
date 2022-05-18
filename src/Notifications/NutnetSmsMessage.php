@@ -10,15 +10,15 @@ class NutnetSmsMessage
 {
     private string $content;
 
-	/**
-	 * @var array<array-key, mixed>
-	 */
+    /**
+     * @var array<array-key, mixed>
+     */
     private array $options = [];
 
-	/**
-	 * @param string $text
-	 * @param array<array-key, mixed> $options@
-	 */
+    /**
+     * @param string $text
+     * @param array<array-key, mixed> $options@
+     */
     public function __construct(string $text, array $options = [])
     {
         $this
@@ -33,9 +33,9 @@ class NutnetSmsMessage
         return $this;
     }
 
-	/**
-	 * @param array<array-key, mixed> $options
-	 */
+    /**
+     * @param array<array-key, mixed> $options
+     */
     public function options(array $options): static
     {
         $this->options = $options;
@@ -43,9 +43,9 @@ class NutnetSmsMessage
         return $this;
     }
 
-	/**
-	 * @return array<array-key, mixed>
-	 */
+    /**
+     * @return array<array-key, mixed>
+     */
     public function getOptions(): array
     {
         return $this->options;
